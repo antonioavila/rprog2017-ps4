@@ -1,0 +1,38 @@
+---
+title: "Trends"
+author: "Ant"
+date: "28 de noviembre de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+:
+
+```{r packages}
+library(gtrendsR)
+library(ggplot2)
+library(Quandl)
+library(tidyverse)
+```
+
+```{r get data}
+trend <- gtrends(c("Toulouse School of Economics"), gprop = "web", time = "all")[[1]]
+ggplot(data = trend) + geom_line(mapping = aes(x= date, y = hits))
+
+```
+
+price:
+
+``{r price, echo=FALSE}
+bitcoin.price <- Quandl("BCHARTS/BITSTAMPUSD") #searchin google for code inside
+bitcoin.price <- bitcoin.price %>% filter(Date %in% bitcoin.trend$date) %>% select(Date, Close) %>% rename(date = Date, price = Close) %>% mutate(price = price*100/max(price))
+
+bitcoin <- left_join(x = bitcoin.trend, y= bitcoin.price, by = "date")
+
+head(bitcoin)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
